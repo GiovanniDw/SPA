@@ -46,13 +46,13 @@ export function handleRoutes() {
       'art/:id': async (id) => {
         const data = await getDynamicMuseumData(museumOptions, id);
         render(data, id, "art-detail");
-        // updateUI('art');
+        updateUI('art');
       },
       'search': async () => {
 
-        const value = await searchInputValue()
+        // const value = await searchInputValue()
 
-        console.log(value)
+        // console.log(value)
         const searchInput = await getLocalSearchInput();
         console.log(searchInput);
         const data = await searchMuseumData(searchInput);
