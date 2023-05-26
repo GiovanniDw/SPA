@@ -1,59 +1,225 @@
-SubModule of [https://github.com/GiovanniDw/web-app-from-scratch-2223](https://github.com/GiovanniDw/web-app-from-scratch-2223)
+# 􀧏 Web App From Scratch
 
+[GitHub - GiovanniDw/web-app-from-scratch-2223](https://github.com/GiovanniDw/web-app-from-scratch-2223)
 
-# Web App From Scratch @cmda-minor-web 2021 - 2022
+[RijksMuseum COVID-23](https://giovannidw.github.io/SPA/)
 
-In this course you will learn to build a web application without frameworks or unnecessary libraries, but with vanilla HTML, CSS & JavaScript as much as possible. The end result is a modular, single page web app (SPA). Data will be retrieved from an external API, manipulated and finally shown in the UI of the App. You will learn to apply interface principles when building and testing the interface. With the gained knowledge you will be able to build interactive prototypes, based on a user story and real data. Also you will gain a better understanding of how API's, frameworks and libraries work.
+# Assignment
 
-## Assignment
+### Rubic
 
-1. [Visitekaartje](https://github.com/cmda-minor-web/web-app-from-scratch-2223/blob/main/course/week-1.md#1-visitekaartje): Ontwerp en maak met HTML, CSS en JS een visitekaartje.
-2. [Squadpagina](https://github.com/cmda-minor-web/web-app-from-scratch-2223/blob/main/course/week-1.md#2-squadpagina): Ontwerp en maak met je team een squadpagina waarin je de verschillende visitekaartjes toont.
-3. [Single Page App](https://github.com/cmda-minor-web/web-app-from-scratch-2223/blob/master/course/week-2.md): Design and build a single page web app based on a User Story.
+| **Deficiency**    | **Criterion**                                                                                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| *User Interface*  | you design, build and test the user interface by applying interface design principles                                                                               |
+| *Code structure*  | you write modular, consistent and efficient HTML, CSS and JavaScript code by applying structure and best practices. You manage state for the application and the UI |
+| *Data management* | \- you understand how you can work with an external API using asynchronous code. You can retrieve data, manipulate and dynamically convert it to structured html    |
+| *Project*         | your app is working and published on GitHub Pages. Your project is thoroughly documented in the `README.md` file in your repository.                                |
 
----
+# User Interface
 
-## Program
+![Image.png](README.assets/Image.png)
 
-| Planning | Maandag | Dinsdag | Vrijdag  |
-|---|---|---|---|
-| [Week 1 - Hellooo 🤸](https://github.com/cmda-minor-web/web-app-from-scratch-2223/blob/master/course/week-1.md) | Introduction + visitekaartje | Squadpagina | Teambespreking |
-| [Week 2 - Hello API 🐒](https://github.com/cmda-minor-web/web-app-from-scratch-2223/blob/master/course/week-2.md) | College + briefing opdracht | College + Work | Feedbackgesprekken |
-| Voorjaarsvakantie |  |  |  |
-| [Week 3 - Refactor 🛠](https://github.com/cmda-minor-web/web-app-from-scratch-2223/blob/master/course/week-3.md)  | College + work  | College + work | Feedbackgesprekken  |
-| [Week 4 - Wrapping up 🎁](https://github.com/cmda-minor-web/web-app-from-scratch-2223/blob/master/course/week-4.md)  | College + work  | Review + work | Beoordelingsgesprekken  |
+![Image.png](README.assets/Image%20(2).png)
 
-## Best Practices
+# Code Structure
 
-All work during this course will be tested against our [Best Practices for JavaScript](https://github.com/cmda-minor-web/best-practices/blob/master/javascript.md).
+### File Structure
 
-## Rubric
+```bash
+.
+├── LICENSE
+├── README.md
+├── deploy.s
+├── index.html
+├── package.json
+├── public
+│   └── Logo.png
+├── src
+│   ├── assets
+│   │   └── Logo.png
+│   ├── css
+│   │   └── main.css
+│   └── js
+│       ├── api.js
+│       ├── app.js
+│       ├── components
+│       │   └── header.js
+│       ├── render.js
+│       ├── router.js
+│       ├── search.js
+│       ├── ui.js
+│       └── vendor
+│           └── routie.js
+├── vite.config.js
+└── yarn.lock
+```
 
-Your efforts will be graded using a single point rubric (see below). You will have to pass the criterion (centre column) to pass the course. During the test you will be consulted and will be given feedback on things we think deficient and things we think are an improvement on the criterion.
+### State
 
-| Deficiency | Criterion | Improvement |
-|:--|:--|:--|
-|  | *User Interface* - you design, build and test the user interface by applying interface design principles |  |
-|  | *Code structure* - you write modular, consistent and efficient HTML, CSS and JavaScript code by applying structure and best practices. You manage state for the application and the UI |  |
-|  | *Data management* - you understand how you can work with an external API using asynchronous code. You can retrieve data, manipulate and dynamically convert it to structured html |  |
-|  | *Project* - your app is working and published on GitHub Pages. Your project is thoroughly documented in the `README.md` file in your repository.  |  |
+```javascript
+export function handleRoutes() {
+  Routie(
+    {
+      '': async () => {
+        const data = await getDynamicMuseumData(museumOptionsHome);
+        render(data, undefined, "home");
+        updateUI('home');
+      },
+      'art': async () => {
+        const data = await getDynamicMuseumData(museumOptions);
+        render(data, undefined, "art");
+        updateUI('art');
+      },
+      'art/:id': async (id) => {
+        const data = await getDynamicMuseumData(museumOptions, id);
+        render(data, id, "art-detail");
+        // updateUI('art');
+      },
+      'search': async () => {
+        const value = await searchInputValue()
+        const searchInput = await getLocalSearchInput();
+        const data = await searchMuseumData(searchInput);
+        render(data, undefined, "search");
+        updateUI('search');
+      }
+    });
+}
+```
 
-<!-- Add a link to your live demo in Github Pages 🌐-->
+### Update UI
 
-<!-- ☝️ replace this description with a description of your own work -->
+```javascript
+export function updateUI(route, id) {
+  const sections = $$('section');
+  const articles = $$('article');
+  const activeSection = $(`[data-route=${route}]`);
+  sections.forEach(section => {
+    section.classList.remove('active')
+  });
+  activeSection.classList.add('active')
+}
+```
 
-<!-- replace the code in the /docs folder with your own, so you can showcase your work with GitHub Pages 🌍 -->
+# Data Management
 
-<!-- Add a nice poster image here at the end of the week, showing off your shiny frontend 📸 -->
+### External API
 
-<!-- Maybe a table of contents here? 📚 -->
+```javascript
+const apiKey = process.env.API_KEY;
+const URL = `https://www.rijksmuseum.nl/api/en/collection?key=${apiKey}&imgonly=true`;
 
-<!-- How about a section that describes how to install this project? 🤓 -->
+export const getDynamicMuseumData = async (options, id) => {
+  const { lang, color, involvedMaker, search } = options;
+  if (!id) {
+    const urlParams = `${URL}&q${search}&ps=100&s=relevance&toppieces=true`
+   const data = await request(urlParams);
+    const formattedResults = await formatMuseumResults(data);
+    return formattedResults;
+    return data
+  } else {
+    const urlParams = `https://www.rijksmuseum.nl/api/en/collection/${id}?key=${apiKey}`
+	const data = await request(urlParams);
+    const formattedResults = await formatMuseumResults(data);
+    return formattedResults;
+  }
+};
+```
 
-<!-- ...but how does one use this project? What are its features 🤔 -->
+### Retrieve Data
 
-<!-- What external data source is featured in your project and what are its properties 🌠 -->
+```javascript
+const request = async (url) => {
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    return data
+  } catch (err) {
+      console.log(err);
+      throw new Error(err)
+    }
+  };
+```
 
-<!-- Maybe a checklist of done stuff and stuff still on your wishlist? ✅ -->
+### Manipulating Data
 
-<!-- How about a license here? 📜 (or is it a licence?) 🤷 -->
+```javascript
+export const formatMuseumResults = (data) => {
+  const array = data.artObjects;
+  return array.map((d) => {
+    return {
+      id: d.objectNumber,
+      title: d.title,
+      name: d.name,
+      headerImage: d.headerImage,
+      productionPlaces: d.productionPlaces,
+      links: d.links,
+      longTitle: d.longTitle,
+      webImage: d.webImage,
+      principalOrFirstMaker: d.principalOrFirstMaker,
+    };
+  });
+};
+```
+
+### Conferting to HTML
+
+### Render
+
+```javascript
+export function render(data, id, page) {
+  switch (page) {
+    case "home":
+      homePage(data.artObjects)
+      break;
+    case "art":
+      collection(data.artObjects)
+      break;
+    case "art-detail":
+      item(data.artObject, id)
+      break;
+    case "search":
+      collectionSearch(data.artObjects)
+      break;
+    default:
+      collection(data.artObjects)
+      break;
+  }
+}
+```
+
+```javascript
+function homePage(data) {
+  const section = $('section[data-route=home]')
+  console.log(data)
+  data.forEach((item) => {
+    const { webImage, objectNumber, headerImage } = item
+    const id = objectNumber;
+    const article = document.createElement('div');
+    article.classList.add('art-container');
+    const html = /*html*/`
+      <article class='museum-item' id='${id}'">
+        <img class='museum-item-image' src="${webImage.url}" alt="" />
+        <div class='item-content'>
+        <a href="#art/${id}">
+          <h4>${item.title}</h4>
+        </a>
+        </div>
+      </article>
+    `;
+    section.insertAdjacentHTML('beforeend', html)
+  })
+}
+```
+
+# Bronnen
+
+[How to create a front end project structure that scales and is easy to maintain?](https://www.blog.duomly.com/how-to-create-frontend-project-structure-that-scales-and-is-easy-to-maintain/)
+
+[Florin Pop - Instant Search with Vanilla JavaScript](https://www.florin-pop.com/blog/2019/06/vanilla-javascript-instant-search/)
+
+[23 CSS Reveal Animations](https://freefrontend.com/css-reveal-animations/)
+
+[CSS Grid can be used to stack elements](https://www.stefanjudis.com/today-i-learned/css-grid-can-be-used-to-stack-elements/)
+
+[Store User Input in a Variable with JavaScript - Made Easy](https://www.ceos3c.com/javascript/store-user-input-in-a-variable-with-javascript/?utm_content=cmp-true)
+
