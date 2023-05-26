@@ -1,7 +1,8 @@
 // const apiKey = import.meta.env.VITE_RIJKSMUSEUM_API;
 import { searchInputValue, searchInput, searchForm, getSearchVal, searchObject, returnSearchInputValue, searchButton } from "./search.js";
+import { cleanMuseumData } from "./cleanMuseumData";
 
-const apiKey = 'S3GLzVAr'
+const apiKey = 'S3GLzVAr';
 const URL = `https://www.rijksmuseum.nl/api/en/collection?key=${apiKey}&imgonly=true`;
 export const getMuseumData = async () => {
   const urlParams = `${URL}`;
@@ -13,16 +14,20 @@ export const getMuseumData = async () => {
 
 export const getDynamicMuseumData = async (options, id) => {
   const { lang, color, involvedMaker, search, toppieces } = options;
-  if (!id) {
-    const urlParams = `${URL}&q=${search}&ps=100&toppieces=${toppieces}`
-    console.log(urlParams);
-    const data = await request(urlParams)
-    return data
-  } else {
+  if (id) {
     const urlParams = `https://www.rijksmuseum.nl/api/en/collection/${id}?key=${apiKey}`
     console.log(urlParams)
-    const data = await request(urlParams)
-    return data
+    const data = await request(urlParams);
+    const cleanData = cleanMuseumDataID(data);
+    return cleanData
+  } else {
+    const urlParams = `${URL}&q=${search}&ps=100&toppieces=${toppieces}`
+    console.log(urlParams);
+
+
+    const data = await request(urlParams);
+    const cleanData = cleanMuseumData(data);
+    return cleanData
   }
 };
 
@@ -69,7 +74,8 @@ export const searchMuseumData = async (newInput) => {
   const urlParams = `${URL}&q=${newInput}&ps=30`
 
   const data = await request(urlParams)
-  return data
+  const cleanData = cleanMuseumData(data)
+  return cleanData
 }
 
 

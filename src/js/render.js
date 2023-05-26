@@ -5,19 +5,19 @@ import { getLocalSearchInput } from './api.js';
 export function render(data, id, page) {
   switch (page) {
     case 'home':
-      homePage(data.artObjects);
+      homePage(data);
       break;
     case 'art':
-      collection(data.artObjects);
+      collection(data);
       break;
     case 'art-detail':
-      item(data.artObject, id);
+      item(data, id);
       break;
     case 'search':
-      collectionSearch(data.artObjects);
+      collectionSearch(data);
       break;
     default:
-      collection(data.artObjects);
+      collection(data);
       break;
   }
 }
