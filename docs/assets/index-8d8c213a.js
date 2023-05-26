@@ -3,7 +3,7 @@ var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 var require_index_001 = __commonJS({
-  "assets/index-f232e431.js"(exports, module) {
+  "assets/index-8d8c213a.js"(exports, module) {
     (function polyfill() {
       const relList = document.createElement("link").relList;
       if (relList && relList.supports && relList.supports("modulepreload")) {
@@ -81,36 +81,40 @@ var require_index_001 = __commonJS({
     $("#search-button");
     const searchInput = $("#search-input");
     const searchForm = $("#search-form");
-    const searchObject = {
-      value: ""
-    };
-    const searchInputValue = () => {
-      let searchVal = "";
-      console.log(searchVal);
-      searchForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        querry = e.target.value;
-        searchVal = searchInput.value;
-        console.log(searchObject);
-        return true;
+    const cleanMuseumData = (data) => {
+      const array = data.artObjects;
+      return array.map((d) => {
+        return {
+          id: d.objectNumber,
+          title: d.title,
+          name: d.name,
+          headerImage: d.headerImage,
+          productionPlaces: d.productionPlaces,
+          links: d.links,
+          longTitle: d.longTitle,
+          webImage: d.webImage,
+          principalOrFirstMaker: d.principalOrFirstMaker
+          // sizeScale: sizeScaleValue,
+          // colorScale: colorScaleValue,
+        };
       });
-      console.log(searchObject);
-      return searchObject;
     };
     const apiKey = "S3GLzVAr";
     const URL$1 = `https://www.rijksmuseum.nl/api/en/collection?key=${apiKey}&imgonly=true`;
     const getDynamicMuseumData = async (options, id) => {
       const { lang, color, involvedMaker, search, toppieces } = options;
-      if (!id) {
-        const urlParams = `${URL$1}&q=${search}&ps=100&toppieces=${toppieces}`;
-        console.log(urlParams);
-        const data = await request(urlParams);
-        return data;
-      } else {
+      if (id) {
         const urlParams = `https://www.rijksmuseum.nl/api/en/collection/${id}?key=${apiKey}`;
         console.log(urlParams);
         const data = await request(urlParams);
-        return data;
+        const cleanData = cleanMuseumDataID(data);
+        return cleanData;
+      } else {
+        const urlParams = `${URL$1}&q=${search}&ps=100&toppieces=${toppieces}`;
+        console.log(urlParams);
+        const data = await request(urlParams);
+        const cleanData = cleanMuseumData(data);
+        return cleanData;
       }
     };
     let input = localStorage.getItem("input");
@@ -135,7 +139,8 @@ var require_index_001 = __commonJS({
       console.log(search);
       const urlParams = `${URL$1}&q=${newInput}&ps=30`;
       const data = await request(urlParams);
-      return data;
+      const cleanData = cleanMuseumData(data);
+      return cleanData;
     };
     const request = async (url) => {
       try {
@@ -338,22 +343,21 @@ var require_index_001 = __commonJS({
     }
     const Routie$1 = Routie(window, true);
     function render(data, id, page) {
-      console.log(data);
       switch (page) {
         case "home":
-          homePage(data.artObjects);
+          homePage(data);
           break;
         case "art":
-          collection(data.artObjects);
+          collection(data);
           break;
         case "art-detail":
-          item(data.artObject, id);
+          item(data, id);
           break;
         case "search":
-          collectionSearch(data.artObjects);
+          collectionSearch(data);
           break;
         default:
-          collection(data.artObjects);
+          collection(data);
           break;
       }
     }
@@ -474,9 +478,9 @@ var require_index_001 = __commonJS({
       </article>
     `
         );
-        section.insertAdjacentHTML("beforeend", html);
+        section.insertAdjacentHTML("beforeEnd", html);
       });
-      section.insertAdjacentHTML("beforestart", renderQuerry);
+      section.insertAdjacentHTML("beforeBegin", renderQuerry);
     };
     function clearElement(node) {
       while (node.firstChild) {
@@ -516,10 +520,9 @@ var require_index_001 = __commonJS({
           "art/:id": async (id) => {
             const data = await getDynamicMuseumData(museumOptions, id);
             render(data, id, "art-detail");
+            updateUI("art");
           },
           "search": async () => {
-            const value = await searchInputValue();
-            console.log(value);
             const searchInput2 = await getLocalSearchInput();
             console.log(searchInput2);
             const data = await searchMuseumData(searchInput2);
@@ -533,4 +536,4 @@ var require_index_001 = __commonJS({
   }
 });
 export default require_index_001();
-//# sourceMappingURL=index-f232e431.js.map
+//# sourceMappingURL=index-8d8c213a.js.map
