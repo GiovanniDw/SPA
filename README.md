@@ -1,4 +1,4 @@
-# 􀧏 Web App From Scratch
+# Web App From Scratch
 
 [GitHub - GiovanniDw/web-app-from-scratch-2223](https://github.com/GiovanniDw/web-app-from-scratch-2223)
 
@@ -8,7 +8,7 @@
 
 ### Rubic
 
-| **Deficiency**    | **Criterion**                                                                                                                                                       |
+|   | **Criterion**                                                                                                                                                       |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | *User Interface*  | you design, build and test the user interface by applying interface design principles                                                                               |
 | *Code structure*  | you write modular, consistent and efficient HTML, CSS and JavaScript code by applying structure and best practices. You manage state for the application and the UI |
